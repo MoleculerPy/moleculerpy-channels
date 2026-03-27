@@ -1,0 +1,26 @@
+# MoleculerPy Channels - Locked dependencies
+# Generated from: pip install -e ".[all,dev]"
+# Python 3.12+
+
+# Core dependency
+moleculerpy>=0.14.1
+
+# Adapters
+redis==7.1.0
+hiredis==3.3.0
+nats-py==2.13.0
+
+# Testing
+pytest==9.0.2
+pytest-asyncio==1.3.0
+pytest-cov>=4.1.0
+
+# Development
+ruff==0.15.0
+mypy==1.19.1
+
+# Transitive
+iniconfig==2.3.0
+packaging==26.0
+pluggy==1.6.0
+typing_extensions==4.15.0
