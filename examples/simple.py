@@ -29,6 +29,7 @@ import asyncio
 # from moleculerpy_channels import ChannelsMiddleware
 # from moleculerpy_channels.adapters import FakeAdapter
 
+
 # For now, using mock classes for demonstration
 class MockSerializer:
     """Mock serializer."""
@@ -157,9 +158,7 @@ async def main():
     # Send messages
     await broker.send_to_channel("orders.created", {"orderId": 123, "total": 99.99})
 
-    await broker.send_to_channel(
-        "orders.cancelled", {"orderId": 456, "reason": "customer request"}
-    )
+    await broker.send_to_channel("orders.cancelled", {"orderId": 456, "reason": "customer request"})
 
     # Wait for delivery
     await asyncio.sleep(0.5)

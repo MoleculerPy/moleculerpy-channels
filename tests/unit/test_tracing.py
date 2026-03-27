@@ -10,7 +10,6 @@ Tests:
 - Fallback when no tracer available
 """
 
-
 import pytest
 
 from moleculerpy_channels.channel import Channel

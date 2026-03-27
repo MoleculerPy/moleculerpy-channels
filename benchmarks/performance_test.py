@@ -43,10 +43,12 @@ class MockSerializer:
 
     def serialize(self, data: Any) -> bytes:
         import json
+
         return json.dumps(data).encode()
 
     def deserialize(self, data: bytes) -> Any:
         import json
+
         return json.loads(data.decode())
 
 
@@ -71,9 +73,7 @@ class MockLogger:
 # ============================================================================
 
 
-async def benchmark_publish_throughput(
-    adapter: RedisAdapter, num_messages: int = 10000
-) -> dict:
+async def benchmark_publish_throughput(adapter: RedisAdapter, num_messages: int = 10000) -> dict:
     """
     Measure publish throughput (messages/second).
 
@@ -107,9 +107,7 @@ async def benchmark_publish_throughput(
 # ============================================================================
 
 
-async def benchmark_consume_throughput(
-    adapter: RedisAdapter, num_messages: int = 10000
-) -> dict:
+async def benchmark_consume_throughput(adapter: RedisAdapter, num_messages: int = 10000) -> dict:
     """
     Measure consume throughput (messages/second).
 
@@ -156,7 +154,11 @@ async def benchmark_consume_throughput(
 
     # Measure total time (publish + consume)
     total_elapsed = time.perf_counter() - publish_start
-    consume_elapsed = last_received_time - first_received_time if (last_received_time and first_received_time) else total_elapsed
+    consume_elapsed = (
+        last_received_time - first_received_time
+        if (last_received_time and first_received_time)
+        else total_elapsed
+    )
 
     throughput = num_messages / consume_elapsed
 
@@ -177,9 +179,7 @@ async def benchmark_consume_throughput(
 # ============================================================================
 
 
-async def benchmark_publish_latency(
-    adapter: RedisAdapter, num_samples: int = 1000
-) -> dict:
+async def benchmark_publish_latency(adapter: RedisAdapter, num_samples: int = 1000) -> dict:
     """
     Measure publish latency distribution (p50, p95, p99).
 
@@ -218,9 +218,7 @@ async def benchmark_publish_latency(
 # ============================================================================
 
 
-async def benchmark_e2e_latency(
-    adapter: RedisAdapter, num_samples: int = 1000
-) -> dict:
+async def benchmark_e2e_latency(adapter: RedisAdapter, num_samples: int = 1000) -> dict:
     """
     Measure end-to-end latency (publish → consume).
 
@@ -444,9 +442,7 @@ async def benchmark_memory_usage(
         "total_active_messages": num_channels * num_active_messages,
         "memory_usage_kb": round(total_memory_kb, 2),
         "memory_per_channel_kb": round(total_memory_kb / num_channels, 2),
-        "memory_per_message_kb": round(
-            total_memory_kb / (num_channels * num_active_messages), 3
-        ),
+        "memory_per_message_kb": round(total_memory_kb / (num_channels * num_active_messages), 3),
     }
 
 
@@ -510,9 +506,7 @@ async def run_benchmarks():
 
     # 5. Concurrent Consumers
     print("⏱️  Running: Concurrent Consumers (5 consumers, 5,000 messages)...")
-    result = await benchmark_concurrent_consumers(
-        adapter, num_consumers=5, num_messages=5000
-    )
+    result = await benchmark_concurrent_consumers(adapter, num_consumers=5, num_messages=5000)
     results.append(result)
     print(f"   ✅ {result['throughput_msg_per_sec']} msg/sec")
     print(f"   Distribution: {result['distribution']}")
@@ -520,9 +514,7 @@ async def run_benchmarks():
 
     # 6. Memory Usage
     print("⏱️  Running: Memory Usage (3 channels, 100 messages each)...")
-    result = await benchmark_memory_usage(
-        adapter, num_channels=3, num_active_messages=100
-    )
+    result = await benchmark_memory_usage(adapter, num_channels=3, num_active_messages=100)
     results.append(result)
     print(f"   ✅ Total: {result['memory_usage_kb']} KB")
     print(f"   Per channel: {result['memory_per_channel_kb']} KB")
@@ -553,22 +545,24 @@ async def run_benchmarks():
     print("| Metric                    | MoleculerPy (Python) | moleculer-channels (Node.js) |")
     print("|---------------------------|--------------------|------------------------------|")
 
-    publish_throughput = next(
-        r for r in results if r["name"] == "Publish Throughput"
-    )["throughput_msg_per_sec"]
-    consume_throughput = next(
-        r for r in results if r["name"] == "Consume Throughput"
-    )["throughput_msg_per_sec"]
-    publish_latency = next(r for r in results if r["name"] == "Publish Latency")[
-        "p50_ms"
+    publish_throughput = next(r for r in results if r["name"] == "Publish Throughput")[
+        "throughput_msg_per_sec"
     ]
-    e2e_latency = next(r for r in results if r["name"] == "End-to-End Latency")[
-        "p50_ms"
+    consume_throughput = next(r for r in results if r["name"] == "Consume Throughput")[
+        "throughput_msg_per_sec"
     ]
+    publish_latency = next(r for r in results if r["name"] == "Publish Latency")["p50_ms"]
+    e2e_latency = next(r for r in results if r["name"] == "End-to-End Latency")["p50_ms"]
 
-    print(f"| Publish Throughput        | {publish_throughput:>15,.0f} | ~12,000 msg/sec              |")
-    print(f"| Consume Throughput        | {consume_throughput:>15,.0f} | ~8,000 msg/sec               |")
-    print(f"| Publish Latency (p50)     | {publish_latency:>15.3f}ms | ~0.5ms                       |")
+    print(
+        f"| Publish Throughput        | {publish_throughput:>15,.0f} | ~12,000 msg/sec              |"
+    )
+    print(
+        f"| Consume Throughput        | {consume_throughput:>15,.0f} | ~8,000 msg/sec               |"
+    )
+    print(
+        f"| Publish Latency (p50)     | {publish_latency:>15.3f}ms | ~0.5ms                       |"
+    )
     print(f"| End-to-End Latency (p50)  | {e2e_latency:>15.3f}ms | ~5ms                         |")
     print()
     print("Note: moleculer-channels numbers are estimates based on Node.js async performance.")

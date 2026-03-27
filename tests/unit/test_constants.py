@@ -1,6 +1,5 @@
 """Tests for constants module."""
 
-
 from moleculerpy_channels import constants as C
 
 
