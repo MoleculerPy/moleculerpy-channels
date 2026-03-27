@@ -12,7 +12,6 @@ Tests:
 
 import base64
 import json
-from unittest.mock import AsyncMock, Mock
 
 import pytest
 
@@ -20,7 +19,6 @@ from moleculerpy_channels.adapters.base import BaseAdapter
 from moleculerpy_channels.channel import Channel, DeadLetteringOptions
 from moleculerpy_channels.errors import ChannelRegistrationError
 from moleculerpy_channels.middleware import ChannelsMiddleware
-
 
 # ── Test Adapter ──────────────────────────────────────────────────────────
 

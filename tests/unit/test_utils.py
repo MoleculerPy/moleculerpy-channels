@@ -2,8 +2,6 @@
 
 import json
 
-import pytest
-
 from moleculerpy_channels import constants as C
 from moleculerpy_channels.utils import (
     default_transform_error_to_headers,

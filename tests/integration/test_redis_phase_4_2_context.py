@@ -22,7 +22,7 @@ async def test_context_propagation_basic_fields(redis_adapter, redis_client):
     Verify basic context fields are propagated:
     - requestID, parentID, level, tracing, caller
     """
-    from moleculerpy_channels import Channel, ChannelsMiddleware
+    from moleculerpy_channels import ChannelsMiddleware
     from moleculerpy_channels.adapters import FakeAdapter
 
     # Mock broker and service

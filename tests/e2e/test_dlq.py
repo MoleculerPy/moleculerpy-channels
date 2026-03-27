@@ -4,7 +4,6 @@ E2E tests for Dead Letter Queue (DLQ) across multiple brokers.
 Tests scenarios where messages fail processing and move to DLQ.
 """
 
-import asyncio
 import pytest
 
 

@@ -190,7 +190,7 @@ class NatsAdapter(BaseAdapter):
                 try:
                     await asyncio.wait_for(self.nc.drain(), timeout=10.0)
                     self.logger.info("NATS connection closed")
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     self.logger.warning("Drain timeout (10s), forcing close")
                     await self.nc.close()
 

@@ -9,6 +9,7 @@ Tests all 9 exception classes defined in moleculerpy_channels.errors:
 """
 
 import pytest
+
 from moleculerpy_channels.errors import (
     AdapterError,
     ChannelRegistrationError,
@@ -20,7 +21,6 @@ from moleculerpy_channels.errors import (
     NatsStreamError,
     SubscriptionError,
 )
-
 
 # ── Base Exception ────────────────────────────────────────────────────────
 

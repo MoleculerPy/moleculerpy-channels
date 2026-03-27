@@ -13,8 +13,8 @@ Example:
     >>> metrics.observe_time("orders.created", "order-processors", 123.45)
 """
 
-from typing import Any, Protocol
 from enum import Enum
+from typing import Any, Protocol
 
 
 class MetricType(Enum):

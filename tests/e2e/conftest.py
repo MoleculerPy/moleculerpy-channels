@@ -6,8 +6,8 @@ Based on MoleculerPy reference patterns from /sources/moleculerpy/tests/e2e/.
 
 import asyncio
 import sys
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import AsyncGenerator
 
 import pytest_asyncio
 
@@ -16,10 +16,11 @@ MOLECULERPY_ROOT = Path(__file__).parent.parent.parent.parent / "moleculerpy"
 if MOLECULERPY_ROOT.exists():
     sys.path.insert(0, str(MOLECULERPY_ROOT))
 
-from moleculerpy import ServiceBroker, Settings, Service  # noqa: E402
+from moleculerpy import Service, ServiceBroker, Settings  # noqa: E402
 from moleculerpy.decorators import action  # noqa: E402
+
 from moleculerpy_channels import ChannelsMiddleware  # noqa: E402
-from moleculerpy_channels.adapters import RedisAdapter, FakeAdapter  # noqa: E402
+from moleculerpy_channels.adapters import FakeAdapter, RedisAdapter  # noqa: E402
 
 
 @pytest_asyncio.fixture

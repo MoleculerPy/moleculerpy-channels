@@ -5,8 +5,9 @@ Defines the structure for channel configuration including dead-letter queue opti
 max retries, consumer groups, and adapter-specific settings.
 """
 
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Awaitable
+from typing import Any
 
 # Type alias for channel handlers
 ChannelHandler = Callable[[Any, Any], Awaitable[None]]

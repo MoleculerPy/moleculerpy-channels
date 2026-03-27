@@ -6,6 +6,7 @@ consumer group members running on different nodes.
 """
 
 import asyncio
+
 import pytest
 
 # TODO: Replace with actual imports when integrated with MoleculerPy

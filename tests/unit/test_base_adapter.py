@@ -10,11 +10,11 @@ Tests:
 """
 
 import asyncio
+
 import pytest
 
 from moleculerpy_channels.adapters.base import BaseAdapter
 from moleculerpy_channels.errors import AdapterError
-
 
 # ── Test Adapter Implementation ───────────────────────────────────────────
 

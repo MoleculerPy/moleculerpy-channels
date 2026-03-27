@@ -10,12 +10,11 @@ Tests:
 - Fallback when no tracer available
 """
 
+
 import pytest
-from unittest.mock import Mock
 
 from moleculerpy_channels.channel import Channel
 from moleculerpy_channels.tracing import TracingMiddleware
-
 
 # ── Mock Objects ──────────────────────────────────────────────────────────
 

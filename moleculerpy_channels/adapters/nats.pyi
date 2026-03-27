@@ -10,7 +10,7 @@ from typing import Any
 from ..channel import Channel
 from ..metrics import ChannelMetrics
 from .base import BaseAdapter
-from .protocols import JetStreamMessage, SanitizedStreamName
+from .protocols import JetStreamMessage
 
 class NatsAdapter(BaseAdapter):
     """NATS JetStream adapter type stub."""

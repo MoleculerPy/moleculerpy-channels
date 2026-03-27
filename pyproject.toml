@@ -122,3 +122,11 @@ ignore = [
     "E501",
     "B008",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"examples/**" = ["E402", "F541"]
+"benchmarks/**" = ["F841"]
+"moleculerpy_channels/adapters/__init__.py" = ["F401"]
+"moleculerpy_channels/adapters/fake.py" = ["B007"]
+"tests/**" = ["B007", "B904"]
+"moleculerpy_channels/adapters/redis.py" = ["B904"]

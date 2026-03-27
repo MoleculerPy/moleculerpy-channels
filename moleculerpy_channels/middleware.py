@@ -5,8 +5,8 @@ Integrates channel adapters into the MoleculerPy broker lifecycle, handles
 service schema parsing, context propagation, and message routing.
 """
 
-import importlib
 import base64
+import importlib
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -398,7 +398,7 @@ class ChannelsMiddleware:
             # Create Context
             # Note: Using MoleculerPy Context (assumed to be compatible)
             context_module = importlib.import_module("moleculerpy")
-            context_cls = getattr(context_module, "Context")
+            context_cls = context_module.Context
 
             # Merge headers into meta (MoleculerPy Context doesn't have separate headers param)
             merged_meta = {**(meta or {})}

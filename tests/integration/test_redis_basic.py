@@ -53,7 +53,7 @@ async def test_redis_publish_with_headers(redis_adapter, redis_client):
     headers = {"userId": "user-123", "traceId": "trace-456"}
 
     # Publish with headers
-    message_id = await redis_adapter.publish(channel_name, payload, {"headers": headers})
+    await redis_adapter.publish(channel_name, payload, {"headers": headers})
 
     # Verify headers in Redis
     messages = await redis_client.xrange(channel_name.encode(), b"-", b"+")

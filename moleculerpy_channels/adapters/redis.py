@@ -296,7 +296,7 @@ class RedisAdapter(BaseAdapter):
         # Background loops will stop naturally when they check channel.unsubscribing
         try:
             await asyncio.wait_for(self.wait_for_channel_active_messages(channel.id), timeout=30.0)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             active_count = await self.get_number_of_channel_active_messages(channel.id)
             self.logger.warning(
                 f"Timeout waiting for {active_count} active message(s) "
@@ -315,7 +315,7 @@ class RedisAdapter(BaseAdapter):
             # Wait for cancellation with timeout
             try:
                 await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), timeout=5.0)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 self.logger.warning(f"Timeout waiting for background tasks on '{channel.name}'")
 
             del self._background_tasks[channel.id]
@@ -527,7 +527,7 @@ class RedisAdapter(BaseAdapter):
                     continue
 
                 # Process messages in background tasks (don't block XREADGROUP loop)
-                for stream_name, message_list in messages:
+                for _stream_name, message_list in messages:
                     for msg_id, fields in message_list:
                         asyncio.create_task(self._process_message(channel, msg_id, fields))
 

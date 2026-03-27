@@ -53,7 +53,7 @@ async def test_cursor_based_xautoclaim(redis_adapter, redis_client):
     await asyncio.sleep(1.5)
 
     # Verify all 10 unique messages processed (allow duplicates from retry mechanism)
-    unique_ids = set(msg["id"] for msg in processed_messages)
+    unique_ids = {msg["id"] for msg in processed_messages}
     assert len(unique_ids) == 10, f"Expected 10 unique IDs, got {len(unique_ids)}: {unique_ids}"
     assert unique_ids == set(range(10)), "All IDs 0-9 should be processed"
 

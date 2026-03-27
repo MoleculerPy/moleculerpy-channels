@@ -130,7 +130,7 @@ async def test_max_retries_exceeded_moves_to_dlq(redis_adapter, redis_client):
     await asyncio.sleep(0.5)  # Let loops start
 
     # Publish message
-    msg_id = await redis_adapter.publish("test.dlq", {"test": "dlq"}, {})
+    await redis_adapter.publish("test.dlq", {"test": "dlq"}, {})
 
     # Wait for retries + DLQ to happen
     # With 50ms min_idle, 30ms claim_interval, and 1s DLQ check,

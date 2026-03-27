@@ -7,7 +7,6 @@ enabling type-safe interactions without tight coupling to implementation details
 
 from typing import Any, NewType, Protocol, runtime_checkable
 
-
 # Branded types for domain safety
 SanitizedStreamName = NewType("SanitizedStreamName", str)
 """
