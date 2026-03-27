@@ -69,9 +69,7 @@ METRIC_CHANNELS_MESSAGES_ERRORS_TOTAL = "moleculerpy.channels.messages.errors.to
 METRIC_CHANNELS_MESSAGES_RETRIES_TOTAL = "moleculerpy.channels.messages.retries.total"
 
 # Messages sent to dead-letter queue
-METRIC_CHANNELS_MESSAGES_DEAD_LETTERING_TOTAL = (
-    "moleculerpy.channels.messages.deadLettering.total"
-)
+METRIC_CHANNELS_MESSAGES_DEAD_LETTERING_TOTAL = "moleculerpy.channels.messages.deadLettering.total"
 
 # ── Error Codes ──────────────────────────────────────────────────────────────
 

@@ -158,7 +158,7 @@ async def test_local_channel_returns_handler_when_tracing_opt_false():
         name="test.channel",
         handler=handler,
         group="test-group",
-        tracing=False  # Explicitly disabled
+        tracing=False,  # Explicitly disabled
     )
 
     wrapped = middleware.local_channel(handler, channel)
@@ -247,7 +247,7 @@ async def test_custom_span_name_string():
         name="orders.process",
         handler=handler,
         group="processors",
-        tracing={"spanName": "Custom Span Name"}
+        tracing={"spanName": "Custom Span Name"},
     )
 
     ctx = create_mock_context(broker)
@@ -274,9 +274,7 @@ async def test_custom_span_name_function():
         name="orders.process",
         handler=handler,
         group="processors",
-        tracing={
-            "spanName": lambda ctx: f"Process Order #{ctx.params.get('orderId', '?')}"
-        }
+        tracing={"spanName": lambda ctx: f"Process Order #{ctx.params.get('orderId', '?')}"},
     )
 
     ctx = create_mock_context(broker, params={"orderId": 123})
@@ -303,10 +301,7 @@ async def test_tags_extraction_full_params():
         return "result"
 
     channel = Channel(
-        name="test.channel",
-        handler=handler,
-        group="test-group",
-        tracing={"tags": {"params": True}}
+        name="test.channel", handler=handler, group="test-group", tracing={"tags": {"params": True}}
     )
 
     ctx = create_mock_context(broker, params={"orderId": 123, "userId": "user-1"})
@@ -334,12 +329,11 @@ async def test_tags_extraction_selective_params():
         name="test.channel",
         handler=handler,
         group="test-group",
-        tracing={"tags": {"params": ["orderId"]}}  # Only orderId
+        tracing={"tags": {"params": ["orderId"]}},  # Only orderId
     )
 
     ctx = create_mock_context(
-        broker,
-        params={"orderId": 123, "userId": "user-1", "secret": "password"}
+        broker, params={"orderId": 123, "userId": "user-1", "secret": "password"}
     )
 
     wrapped = middleware.local_channel(handler, channel)
@@ -364,10 +358,7 @@ async def test_tags_extraction_full_meta():
         return "result"
 
     channel = Channel(
-        name="test.channel",
-        handler=handler,
-        group="test-group",
-        tracing={"tags": {"meta": True}}
+        name="test.channel", handler=handler, group="test-group", tracing={"tags": {"meta": True}}
     )
 
     ctx = create_mock_context(broker, meta={"userId": "user-1", "requestId": "req-1"})
@@ -399,10 +390,7 @@ async def test_tags_extraction_function():
         }
 
     channel = Channel(
-        name="test.channel",
-        handler=handler,
-        group="test-group",
-        tracing={"tags": extract_tags}
+        name="test.channel", handler=handler, group="test-group", tracing={"tags": extract_tags}
     )
 
     ctx = create_mock_context(broker, params={"orderId": 456})
@@ -434,10 +422,7 @@ async def test_safety_tags_removes_sensitive_data():
         name="auth.login",
         handler=handler,
         group="auth-group",
-        tracing={
-            "tags": {"params": True},
-            "safetyTags": True
-        }
+        tracing={"tags": {"params": True}, "safetyTags": True},
     )
 
     ctx = create_mock_context(
@@ -445,9 +430,9 @@ async def test_safety_tags_removes_sensitive_data():
         params={
             "username": "john",
             "password": "secret123",  # Should be redacted
-            "apiKey": "key-abc",      # Should be redacted
-            "userId": "user-1"        # Should remain
-        }
+            "apiKey": "key-abc",  # Should be redacted
+            "userId": "user-1",  # Should remain
+        },
     )
 
     wrapped = middleware.local_channel(handler, channel)
@@ -474,10 +459,10 @@ async def test_safety_tags_recursive():
             "password": "secret",  # Nested sensitive
             "profile": {
                 "email": "john@example.com",
-                "apiKey": "key-123"  # Deeply nested sensitive
-            }
+                "apiKey": "key-123",  # Deeply nested sensitive
+            },
         },
-        "token": "bearer-token"  # Top-level sensitive
+        "token": "bearer-token",  # Top-level sensitive
     }
 
     sanitized = middleware._safety_object(obj)
@@ -588,19 +573,16 @@ async def test_full_tracing_flow():
         group="order-processors",
         tracing={
             "spanName": lambda ctx: f"Process Order #{ctx.params.get('orderId')}",
-            "tags": {
-                "params": ["orderId"],
-                "meta": True
-            },
-            "safetyTags": True
-        }
+            "tags": {"params": ["orderId"], "meta": True},
+            "safetyTags": True,
+        },
     )
 
     ctx = create_mock_context(
         broker,
         request_id="req-789",
         params={"orderId": 999, "password": "secret"},
-        meta={"userId": "user-1"}
+        meta={"userId": "user-1"},
     )
 
     wrapped = middleware.local_channel(handler, channel)
@@ -631,6 +613,7 @@ async def test_full_tracing_flow():
 async def import_asyncio_and_sleep(duration):
     """Helper to avoid linter warnings."""
     import asyncio
+
     await asyncio.sleep(duration)
 
 

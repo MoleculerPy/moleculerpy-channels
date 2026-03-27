@@ -66,13 +66,16 @@ async def test_context_propagation_basic_fields(redis_adapter, redis_client):
     await redis_adapter.publish(
         "test.context.basic",
         {"message": "hello"},
-        {"ctx": ctx, "headers": {
-            "$requestID": ctx.request_id,
-            "$parentID": ctx.id,
-            "$level": str(ctx.level),
-            "$tracing": str(ctx.tracing),
-            "$caller": ctx.service.full_name,
-        }},
+        {
+            "ctx": ctx,
+            "headers": {
+                "$requestID": ctx.request_id,
+                "$parentID": ctx.id,
+                "$level": str(ctx.level),
+                "$tracing": str(ctx.tracing),
+                "$caller": ctx.service.full_name,
+            },
+        },
     )
 
     # Verify message headers in Redis
@@ -136,8 +139,12 @@ async def test_context_propagation_meta_and_headers(redis_adapter, redis_client)
         {"message": "test"},
         {
             "headers": {
-                "$meta": base64.b64encode(b'{"userId":"user-123","tenantId":"tenant-456"}').decode(),
-                "$headers": base64.b64encode(b'{"x-custom":"value","x-trace-id":"trace-789"}').decode(),
+                "$meta": base64.b64encode(
+                    b'{"userId":"user-123","tenantId":"tenant-456"}'
+                ).decode(),
+                "$headers": base64.b64encode(
+                    b'{"x-custom":"value","x-trace-id":"trace-789"}'
+                ).decode(),
             }
         },
     )
@@ -255,7 +262,10 @@ async def test_context_propagation_all_fields_together(redis_adapter, redis_clie
     async def handler(payload, raw):
         nonlocal received_fields
         msg_id, fields = raw
-        received_fields = {k.decode() if isinstance(k, bytes) else k: v.decode() if isinstance(v, bytes) else v for k, v in fields.items()}
+        received_fields = {
+            k.decode() if isinstance(k, bytes) else k: v.decode() if isinstance(v, bytes) else v
+            for k, v in fields.items()
+        }
 
     channel = Channel(
         name="test.context.complete",

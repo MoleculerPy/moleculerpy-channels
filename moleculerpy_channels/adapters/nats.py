@@ -100,10 +100,7 @@ class NatsAdapter(BaseAdapter):
         super().__init__()
 
         if NATS is None:
-            raise ImportError(
-                "nats-py package not installed. "
-                "Install with: pip install nats-py"
-            )
+            raise ImportError("nats-py package not installed. Install with: pip install nats-py")
 
         self.url = url
         self.stream_config = stream_config or {}
@@ -281,9 +278,7 @@ class NatsAdapter(BaseAdapter):
         if not self._connected or not self.js:
             raise NatsConsumerError("Adapter not connected")
 
-        self.logger.debug(
-            f"Subscribing to '{channel.name}' with group '{channel.group}'"
-        )
+        self.logger.debug(f"Subscribing to '{channel.name}' with group '{channel.group}'")
 
         # Initialize active message tracking
         self.init_channel_active_messages(channel.id)
@@ -415,9 +410,7 @@ class NatsAdapter(BaseAdapter):
                 active_count = await self.get_number_of_channel_active_messages(channel.id)
                 self.metrics.set_active(channel.name, channel.group, active_count)
 
-    async def _move_to_dlq(
-        self, channel: Channel, msg: JetStreamMessage, error: Exception
-    ) -> None:
+    async def _move_to_dlq(self, channel: Channel, msg: JetStreamMessage, error: Exception) -> None:
         """
         Move failed message to Dead Letter Queue.
 
@@ -489,9 +482,7 @@ class NatsAdapter(BaseAdapter):
                 break
 
             active = await self.get_number_of_channel_active_messages(channel.id)
-            self.logger.info(
-                f"Waiting for {active} active messages on '{channel.name}'..."
-            )
+            self.logger.info(f"Waiting for {active} active messages on '{channel.name}'...")
             await asyncio.sleep(1.0)
 
         # Drain and unsubscribe (drain already does unsubscribe)
@@ -510,9 +501,7 @@ class NatsAdapter(BaseAdapter):
         except Exception as e:
             self.logger.error(f"Error unsubscribing from '{channel.name}': {e}")
 
-    async def publish(
-        self, channel_name: str, payload: Any, opts: dict[str, Any]
-    ) -> str:
+    async def publish(self, channel_name: str, payload: Any, opts: dict[str, Any]) -> str:
         """
         Publish message to NATS JetStream.
 
@@ -560,9 +549,7 @@ class NatsAdapter(BaseAdapter):
         except Exception as e:
             raise MessagePublishError(f"Failed to publish to '{channel_name}': {e}") from e
 
-    def parse_message_headers(
-        self, raw_message: JetStreamMessage
-    ) -> dict[str, str] | None:
+    def parse_message_headers(self, raw_message: JetStreamMessage) -> dict[str, str] | None:
         """
         Parse headers from NATS JetStream message.
 

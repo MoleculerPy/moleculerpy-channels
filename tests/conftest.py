@@ -74,10 +74,12 @@ def mock_broker():
     class MockSerializer:
         def serialize(self, data):
             import json
+
             return json.dumps(data).encode()
 
         def deserialize(self, data):
             import json
+
             return json.loads(data.decode())
 
     class MockLogger:

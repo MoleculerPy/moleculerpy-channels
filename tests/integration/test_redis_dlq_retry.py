@@ -51,7 +51,7 @@ async def test_retry_on_handler_failure(redis_adapter, redis_client):
         max_retries=3,
         redis=RedisOptions(
             min_idle_time=100,  # 100ms (fast retry for testing)
-            claim_interval=50,   # Check every 50ms
+            claim_interval=50,  # Check every 50ms
         ),
     )
     channel.id = "consumer-retry"
@@ -115,9 +115,9 @@ async def test_max_retries_exceeded_moves_to_dlq(redis_adapter, redis_client):
         handler=always_failing_handler,
         max_retries=3,
         redis=RedisOptions(
-            min_idle_time=50,         # Fast retry (50ms)
-            claim_interval=30,        # Check every 30ms
-            dlq_check_interval=1,     # Check DLQ every 1 second (like moleculer-channels)
+            min_idle_time=50,  # Fast retry (50ms)
+            claim_interval=30,  # Check every 30ms
+            dlq_check_interval=1,  # Check DLQ every 1 second (like moleculer-channels)
         ),
         dead_lettering=DeadLetteringOptions(
             enabled=True,
@@ -264,9 +264,9 @@ async def test_dlq_preserves_original_metadata(redis_adapter, redis_client):
         headers = json.loads(headers_bytes.decode())
 
         # Verify original metadata preserved
-        assert (
-            HEADER_ORIGINAL_CHANNEL in headers
-        ), f"DLQ should have {HEADER_ORIGINAL_CHANNEL} header"
+        assert HEADER_ORIGINAL_CHANNEL in headers, (
+            f"DLQ should have {HEADER_ORIGINAL_CHANNEL} header"
+        )
         assert headers[HEADER_ORIGINAL_CHANNEL] == "test.metadata"
 
         assert HEADER_ORIGINAL_GROUP in headers, f"DLQ should have {HEADER_ORIGINAL_GROUP} header"
@@ -289,7 +289,7 @@ async def test_multiple_messages_independent_retry(redis_adapter, redis_client):
     from moleculerpy_channels.channel import Channel, RedisOptions
 
     message_attempts = {}  # msg_id -> attempt_count
-    success_events = {}    # msg_id -> Event
+    success_events = {}  # msg_id -> Event
 
     async def selective_handler(payload, raw):
         """Handler that succeeds for msg1, fails for msg2."""
@@ -335,7 +335,9 @@ async def test_multiple_messages_independent_retry(redis_adapter, redis_client):
 
     # Verify msg1 processed once, msg2 retried multiple times
     assert message_attempts["msg1"] == 1, "msg1 should succeed on first attempt"
-    assert message_attempts["msg2"] >= 2, f"msg2 should be retried, got {message_attempts['msg2']} attempts"
+    assert message_attempts["msg2"] >= 2, (
+        f"msg2 should be retried, got {message_attempts['msg2']} attempts"
+    )
 
     # Verify msg1 acked, msg2 still pending
     await asyncio.sleep(0.3)

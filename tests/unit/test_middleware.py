@@ -27,6 +27,7 @@ from moleculerpy_channels.middleware import ChannelsMiddleware
 
 class TestAdapter(BaseAdapter):
     """Minimal adapter for testing."""
+
     __test__ = False
 
     async def connect(self):
@@ -42,18 +43,12 @@ class TestAdapter(BaseAdapter):
 
     async def unsubscribe(self, channel):
         if hasattr(self, "subscriptions"):
-            self.subscriptions = [
-                s for s in self.subscriptions if s["channel"].id != channel.id
-            ]
+            self.subscriptions = [s for s in self.subscriptions if s["channel"].id != channel.id]
 
     async def publish(self, channel_name, payload, opts):
         if not hasattr(self, "published"):
             self.published = []
-        self.published.append({
-            "channel_name": channel_name,
-            "payload": payload,
-            "opts": opts
-        })
+        self.published.append({"channel_name": channel_name, "payload": payload, "opts": opts})
 
     def parse_message_headers(self, raw_message):
         return {}
@@ -73,8 +68,11 @@ def create_mock_broker():
             return json.loads(data.decode())
 
     class MockLogger:
-        def info(self, msg): pass
-        def debug(self, msg): pass
+        def info(self, msg):
+            pass
+
+        def debug(self, msg):
+            pass
 
     class MockBroker:
         def __init__(self):
@@ -329,9 +327,7 @@ async def test_service_created_invalid_definition_type_raises():
     middleware = ChannelsMiddleware(adapter=adapter)
     middleware.broker = create_mock_broker()
 
-    service = create_mock_service(
-        schema={"channels": {"test.channel": "not a function or dict"}}
-    )
+    service = create_mock_service(schema={"channels": {"test.channel": "not a function or dict"}})
 
     with pytest.raises(ChannelRegistrationError, match="Invalid channel definition"):
         await middleware.service_created(service)
@@ -382,7 +378,8 @@ async def test_broker_starting_subscribes_all_channels():
     middleware.broker = broker
 
     # Register 3 channels
-    async def handler(p, r): pass
+    async def handler(p, r):
+        pass
 
     services = [
         create_mock_service(f"service-{i}", {"channels": {f"channel-{i}": handler}})
@@ -413,7 +410,8 @@ async def test_service_stopping_unsubscribes_service_channels():
     middleware.broker = broker
 
     # Create 2 services with channels
-    async def handler(p, r): pass
+    async def handler(p, r):
+        pass
 
     service1 = create_mock_service("service-1", {"channels": {"channel-1": handler}})
     service2 = create_mock_service("service-2", {"channels": {"channel-2": handler}})
@@ -586,7 +584,8 @@ async def test_parse_channel_simple_function():
     broker = create_mock_broker()
     middleware.broker = broker
 
-    async def handler(p, r): pass
+    async def handler(p, r):
+        pass
 
     service = create_mock_service()
     channel = await middleware._parse_channel_definition("test.chan", handler, service)
@@ -604,7 +603,8 @@ async def test_parse_channel_dict_with_custom_group():
     broker = create_mock_broker()
     middleware.broker = broker
 
-    async def handler(p, r): pass
+    async def handler(p, r):
+        pass
 
     definition = {
         "handler": handler,
@@ -625,7 +625,8 @@ async def test_parse_channel_dict_with_dead_lettering():
     broker = create_mock_broker()
     middleware.broker = broker
 
-    async def handler(p, r): pass
+    async def handler(p, r):
+        pass
 
     definition = {
         "handler": handler,

@@ -182,11 +182,7 @@ class ConsumerService(Service):
     def schema(self):
         """Return service schema including channels."""
         channels = {
-            "test.events": {
-                "group": "event-processors",
-                "context": True,
-                "handler": self._on_event
-            }
+            "test.events": {"group": "event-processors", "context": True, "handler": self._on_event}
         }
 
         # Only node-0 subscribes to "test.single" (for test_single_consumer_gets_all)
@@ -194,7 +190,7 @@ class ConsumerService(Service):
             channels["test.single"] = {
                 "group": "single-processors",
                 "context": True,
-                "handler": self._on_event
+                "handler": self._on_event,
             }
 
         return {"channels": channels}

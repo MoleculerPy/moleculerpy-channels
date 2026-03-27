@@ -21,6 +21,7 @@ from moleculerpy_channels.errors import AdapterError
 
 class TestAdapter(BaseAdapter):
     """Concrete test adapter for testing base functionality."""
+
     __test__ = False
 
     async def connect(self):
@@ -56,22 +57,40 @@ def test_base_adapter_requires_all_abstract_methods():
 
     # Missing connect()
     class IncompleteAdapter1(BaseAdapter):
-        async def disconnect(self): pass
-        async def subscribe(self, channel, service): pass
-        async def unsubscribe(self, channel): pass
-        async def publish(self, channel_name, payload, opts): pass
-        def parse_message_headers(self, raw_message): pass
+        async def disconnect(self):
+            pass
+
+        async def subscribe(self, channel, service):
+            pass
+
+        async def unsubscribe(self, channel):
+            pass
+
+        async def publish(self, channel_name, payload, opts):
+            pass
+
+        def parse_message_headers(self, raw_message):
+            pass
 
     with pytest.raises(TypeError):
         IncompleteAdapter1()
 
     # Missing parse_message_headers()
     class IncompleteAdapter2(BaseAdapter):
-        async def connect(self): pass
-        async def disconnect(self): pass
-        async def subscribe(self, channel, service): pass
-        async def unsubscribe(self, channel): pass
-        async def publish(self, channel_name, payload, opts): pass
+        async def connect(self):
+            pass
+
+        async def disconnect(self):
+            pass
+
+        async def subscribe(self, channel, service):
+            pass
+
+        async def unsubscribe(self, channel):
+            pass
+
+        async def publish(self, channel_name, payload, opts):
+            pass
 
     with pytest.raises(TypeError):
         IncompleteAdapter2()
@@ -106,7 +125,8 @@ def test_init_method_stores_broker_and_logger():
         node_id = "test-node"
 
     class MockLogger:
-        def info(self, msg): pass
+        def info(self, msg):
+            pass
 
     broker = MockBroker()
     logger = MockLogger()
@@ -372,10 +392,7 @@ async def test_active_messages_tracking_is_thread_safe():
     async def add_messages(msg_ids):
         await adapter.add_channel_active_messages("channel-1", msg_ids)
 
-    tasks = [
-        add_messages([f"msg-{i}-{j}" for j in range(10)])
-        for i in range(5)
-    ]
+    tasks = [add_messages([f"msg-{i}-{j}" for j in range(10)]) for i in range(5)]
 
     await asyncio.gather(*tasks)
 
@@ -387,10 +404,7 @@ async def test_active_messages_tracking_is_thread_safe():
     async def remove_messages(msg_ids):
         await adapter.remove_channel_active_messages("channel-1", msg_ids)
 
-    remove_tasks = [
-        remove_messages([f"msg-{i}-{j}" for j in range(10)])
-        for i in range(5)
-    ]
+    remove_tasks = [remove_messages([f"msg-{i}-{j}" for j in range(10)]) for i in range(5)]
 
     await asyncio.gather(*remove_tasks)
 

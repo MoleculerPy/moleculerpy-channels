@@ -35,10 +35,9 @@ async def test_balanced_consumer_groups(three_broker_cluster):
 
     # Publish 30 messages from node-0
     for i in range(30):
-        await brokers[0].call("publisher.send_message", {
-            "channel": "test.events",
-            "payload": {"index": i}
-        })
+        await brokers[0].call(
+            "publisher.send_message", {"channel": "test.events", "payload": {"index": i}}
+        )
 
     # Wait for consumption
     await asyncio.sleep(3.0)

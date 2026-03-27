@@ -33,10 +33,10 @@ async def test_high_concurrency_publishing(three_broker_cluster):
     async def publisher_task(pub_id: int):
         """Single publisher sends N messages."""
         for i in range(MESSAGES_PER_PUBLISHER):
-            await brokers[0].call("publisher.send_message", {
-                "channel": "test.events",
-                "payload": {"publisher": pub_id, "index": i}
-            })
+            await brokers[0].call(
+                "publisher.send_message",
+                {"channel": "test.events", "payload": {"publisher": pub_id, "index": i}},
+            )
 
     # Launch concurrent publishers
     start = time.perf_counter()

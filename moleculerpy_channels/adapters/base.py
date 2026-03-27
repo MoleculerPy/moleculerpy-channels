@@ -20,12 +20,12 @@ class JSONSerializer:
     @staticmethod
     def serialize(data: Any) -> bytes:
         """Serialize data to JSON bytes."""
-        return json.dumps(data).encode('utf-8')
+        return json.dumps(data).encode("utf-8")
 
     @staticmethod
     def deserialize(data: bytes) -> Any:
         """Deserialize JSON bytes to data."""
-        return json.loads(data.decode('utf-8'))
+        return json.loads(data.decode("utf-8"))
 
 
 class BaseAdapter(ABC):
@@ -64,7 +64,7 @@ class BaseAdapter(ABC):
         self.broker = broker
         self.logger = logger
         # Create a simple JSON serializer if broker.serializer is just a string
-        if hasattr(broker, 'serializer') and isinstance(broker.serializer, str):
+        if hasattr(broker, "serializer") and isinstance(broker.serializer, str):
             self.serializer = JSONSerializer()
         else:
             self.serializer = broker.serializer
@@ -116,9 +116,7 @@ class BaseAdapter(ABC):
         pass
 
     @abstractmethod
-    async def publish(
-        self, channel_name: str, payload: Any, opts: dict[str, Any]
-    ) -> str | None:
+    async def publish(self, channel_name: str, payload: Any, opts: dict[str, Any]) -> str | None:
         """
         Publish message to a channel.
 
@@ -181,9 +179,7 @@ class BaseAdapter(ABC):
         """
         if channel_id in self._active_messages:
             if to_throw:
-                raise AdapterError(
-                    f"Already tracking active messages of channel {channel_id}"
-                )
+                raise AdapterError(f"Already tracking active messages of channel {channel_id}")
         self._active_messages[channel_id] = set()
 
     def stop_channel_active_messages(self, channel_id: str) -> None:
@@ -227,9 +223,7 @@ class BaseAdapter(ABC):
                 self._active_messages[channel_id] = set()
             self._active_messages[channel_id].update(message_ids)
 
-    async def remove_channel_active_messages(
-        self, channel_id: str, message_ids: list[str]
-    ) -> None:
+    async def remove_channel_active_messages(self, channel_id: str, message_ids: list[str]) -> None:
         """
         Remove messages from active tracking.
 

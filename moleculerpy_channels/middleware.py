@@ -157,13 +157,15 @@ class ChannelsMiddleware:
                 # Transfer Context properties to headers
                 opts["headers"]["$requestID"] = ctx.request_id
                 opts["headers"]["$parentID"] = ctx.id
-                opts["headers"]["$tracing"] = str(ctx.tracing) if ctx.tracing is not None else "false"
+                opts["headers"]["$tracing"] = (
+                    str(ctx.tracing) if ctx.tracing is not None else "false"
+                )
                 opts["headers"]["$level"] = str(ctx.level)
 
                 # Caller service name
                 if hasattr(ctx, "service") and ctx.service:
                     opts["headers"]["$caller"] = getattr(
-                        ctx.service, 'full_name', getattr(ctx.service, 'name', 'unknown')
+                        ctx.service, "full_name", getattr(ctx.service, "name", "unknown")
                     )
 
                 # Parent channel name (for nested channel calls)
@@ -226,9 +228,7 @@ class ChannelsMiddleware:
             if self.started:
                 await self.adapter.subscribe(channel, service)
 
-    async def _parse_channel_definition(
-        self, name: str, definition: Any, service: Any
-    ) -> Channel:
+    async def _parse_channel_definition(self, name: str, definition: Any, service: Any) -> Channel:
         """
         Parse channel definition from service schema.
 
@@ -264,16 +264,16 @@ class ChannelsMiddleware:
 
         # Build Channel object
         channel_name = channel_def.get("name", self.adapter.add_prefix_topic(name))
-        group = channel_def.get("group", getattr(service, 'full_name', getattr(service, 'name', 'unknown')))
+        group = channel_def.get(
+            "group", getattr(service, "full_name", getattr(service, "name", "unknown"))
+        )
         context = channel_def.get("context", self.context)
 
         # Consumer ID: <nodeID>.<serviceName>.<channelName>
         # MoleculerPy uses 'nodeID' (Moleculer.js compatible attribute name)
-        node_id = getattr(self.broker, 'nodeID', getattr(self.broker, 'node_id', 'node-1'))
-        service_name = getattr(service, 'full_name', getattr(service, 'name', 'unknown'))
-        consumer_id = self.adapter.add_prefix_topic(
-            f"{node_id}.{service_name}.{channel_name}"
-        )
+        node_id = getattr(self.broker, "nodeID", getattr(self.broker, "node_id", "node-1"))
+        service_name = getattr(service, "full_name", getattr(service, "name", "unknown"))
+        consumer_id = self.adapter.add_prefix_topic(f"{node_id}.{service_name}.{channel_name}")
 
         # Dead lettering options
         dlq_opts = None
@@ -454,7 +454,8 @@ class ChannelsMiddleware:
             item
             for item in self.channel_registry
             if not (
-                getattr(item["service"], 'full_name', getattr(item["service"], 'name', 'unknown')) == getattr(service, 'full_name', getattr(service, 'name', 'unknown'))
+                getattr(item["service"], "full_name", getattr(item["service"], "name", "unknown"))
+                == getattr(service, "full_name", getattr(service, "name", "unknown"))
                 and (channel is None or channel.name == item["name"])
             )
         ]
@@ -492,7 +493,10 @@ class ChannelsMiddleware:
             service: Service instance
         """
         service_channels = [
-            item for item in self.channel_registry if getattr(item["service"], 'full_name', getattr(item["service"], 'name', 'unknown')) == getattr(service, 'full_name', getattr(service, 'name', 'unknown'))
+            item
+            for item in self.channel_registry
+            if getattr(item["service"], "full_name", getattr(item["service"], "name", "unknown"))
+            == getattr(service, "full_name", getattr(service, "name", "unknown"))
         ]
 
         for item in service_channels:

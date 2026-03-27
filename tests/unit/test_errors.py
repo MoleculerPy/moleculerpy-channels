@@ -178,17 +178,20 @@ def test_nats_errors_can_catch_as_adapter_error():
 # ── Inheritance Chain ─────────────────────────────────────────────────────
 
 
-@pytest.mark.parametrize("error_class,expected_bases", [
-    (ChannelsError, [Exception]),
-    (AdapterError, [ChannelsError, Exception]),
-    (ChannelRegistrationError, [ChannelsError, Exception]),
-    (MessageSerializationError, [ChannelsError, Exception]),
-    (MessagePublishError, [AdapterError, ChannelsError, Exception]),
-    (SubscriptionError, [AdapterError, ChannelsError, Exception]),
-    (NatsConnectionError, [AdapterError, ChannelsError, Exception]),
-    (NatsStreamError, [AdapterError, ChannelsError, Exception]),
-    (NatsConsumerError, [AdapterError, ChannelsError, Exception]),
-])
+@pytest.mark.parametrize(
+    "error_class,expected_bases",
+    [
+        (ChannelsError, [Exception]),
+        (AdapterError, [ChannelsError, Exception]),
+        (ChannelRegistrationError, [ChannelsError, Exception]),
+        (MessageSerializationError, [ChannelsError, Exception]),
+        (MessagePublishError, [AdapterError, ChannelsError, Exception]),
+        (SubscriptionError, [AdapterError, ChannelsError, Exception]),
+        (NatsConnectionError, [AdapterError, ChannelsError, Exception]),
+        (NatsStreamError, [AdapterError, ChannelsError, Exception]),
+        (NatsConsumerError, [AdapterError, ChannelsError, Exception]),
+    ],
+)
 def test_exception_inheritance_chain(error_class, expected_bases):
     """Test complete inheritance chain for each exception."""
     for base in expected_bases:

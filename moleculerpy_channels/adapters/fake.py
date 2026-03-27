@@ -111,9 +111,7 @@ class FakeAdapter(BaseAdapter):
         channel_name = channel.name
         if channel_name in self._subscriptions:
             self._subscriptions[channel_name] = [
-                (ch, svc)
-                for ch, svc in self._subscriptions[channel_name]
-                if ch.id != channel.id
+                (ch, svc) for ch, svc in self._subscriptions[channel_name] if ch.id != channel.id
             ]
             if not self._subscriptions[channel_name]:
                 del self._subscriptions[channel_name]

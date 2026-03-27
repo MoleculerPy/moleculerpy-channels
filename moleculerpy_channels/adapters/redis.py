@@ -180,7 +180,7 @@ class RedisAdapter(BaseAdapter):
 
             # Generate consumer name (unique per broker instance)
             # MoleculerPy uses 'nodeID' (Moleculer.js compatible attribute name)
-            broker_id = getattr(self.broker, 'nodeID', getattr(self.broker, 'node_id', 'broker-1'))
+            broker_id = getattr(self.broker, "nodeID", getattr(self.broker, "node_id", "broker-1"))
             self._consumer_name = f"{broker_id}-{int(time.time() * 1000)}"
 
             self._connected = True
@@ -263,9 +263,7 @@ class RedisAdapter(BaseAdapter):
 
             # 3. DLQ detection loop (move failed messages to DLQ)
             if channel.dead_lettering and channel.dead_lettering.enabled:
-                dlq_task = asyncio.create_task(
-                    self._dlq_loop(channel), name=f"dlq-{channel.id}"
-                )
+                dlq_task = asyncio.create_task(self._dlq_loop(channel), name=f"dlq-{channel.id}")
                 tasks.append(dlq_task)
 
             # Store tasks for cleanup
@@ -297,9 +295,7 @@ class RedisAdapter(BaseAdapter):
         # STEP 1: Wait for active messages to complete FIRST (critical!)
         # Background loops will stop naturally when they check channel.unsubscribing
         try:
-            await asyncio.wait_for(
-                self.wait_for_channel_active_messages(channel.id), timeout=30.0
-            )
+            await asyncio.wait_for(self.wait_for_channel_active_messages(channel.id), timeout=30.0)
         except asyncio.TimeoutError:
             active_count = await self.get_number_of_channel_active_messages(channel.id)
             self.logger.warning(
@@ -318,9 +314,7 @@ class RedisAdapter(BaseAdapter):
 
             # Wait for cancellation with timeout
             try:
-                await asyncio.wait_for(
-                    asyncio.gather(*tasks, return_exceptions=True), timeout=5.0
-                )
+                await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), timeout=5.0)
             except asyncio.TimeoutError:
                 self.logger.warning(f"Timeout waiting for background tasks on '{channel.name}'")
 
@@ -337,9 +331,7 @@ class RedisAdapter(BaseAdapter):
 
         self.logger.debug(f"Unsubscribed from '{channel.name}'")
 
-    async def publish(
-        self, channel_name: str, payload: Any, opts: dict[str, Any]
-    ) -> str | None:
+    async def publish(self, channel_name: str, payload: Any, opts: dict[str, Any]) -> str | None:
         """
         Publish message to Redis Stream.
 
@@ -364,9 +356,7 @@ class RedisAdapter(BaseAdapter):
             serialized_payload = self.serializer.serialize(payload)
 
             # Build fields dict
-            fields: dict[StreamFieldValue, StreamFieldValue] = {
-                b"payload": serialized_payload
-            }
+            fields: dict[StreamFieldValue, StreamFieldValue] = {b"payload": serialized_payload}
 
             # Add headers
             headers = opts.get("headers", {})
@@ -606,7 +596,9 @@ class RedisAdapter(BaseAdapter):
                 # Update cursor for next iteration
                 # When cursor returns to "0-0", Redis has scanned entire PEL
                 # and will restart from beginning on next call (circular scan)
-                self._xclaim_cursors[channel.id] = next_cursor.decode() if isinstance(next_cursor, bytes) else next_cursor
+                self._xclaim_cursors[channel.id] = (
+                    next_cursor.decode() if isinstance(next_cursor, bytes) else next_cursor
+                )
 
                 # Metrics: retry attempts (one increment per claimed message)
                 if claimed_messages and self.metrics:
@@ -643,7 +635,9 @@ class RedisAdapter(BaseAdapter):
         redis_opts = channel.redis
         dlq_check_interval = redis_opts.dlq_check_interval if redis_opts else 30
 
-        self.logger.debug(f"Starting DLQ loop for '{channel.name}' (interval: {dlq_check_interval}s)")
+        self.logger.debug(
+            f"Starting DLQ loop for '{channel.name}' (interval: {dlq_check_interval}s)"
+        )
 
         while not channel.unsubscribing:
             try:
@@ -723,9 +717,7 @@ class RedisAdapter(BaseAdapter):
                 self.metrics.observe_time(channel.name, channel.group, duration_ms)
 
         except Exception as e:
-            self.logger.error(
-                f"Handler error for message {msg_id_str} on '{channel.name}': {e}"
-            )
+            self.logger.error(f"Handler error for message {msg_id_str} on '{channel.name}': {e}")
 
             # Store error metadata in Redis Hash
             error_metadata = self._transform_error_to_metadata(e)

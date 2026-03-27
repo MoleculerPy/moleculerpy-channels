@@ -32,12 +32,8 @@ def test_metric_constants_defined():
     assert C.METRIC_CHANNELS_MESSAGES_TOTAL == "moleculerpy.channels.messages.total"
     assert C.METRIC_CHANNELS_MESSAGES_ACTIVE == "moleculerpy.channels.messages.active"
     assert C.METRIC_CHANNELS_MESSAGES_TIME == "moleculerpy.channels.messages.time"
-    assert (
-        C.METRIC_CHANNELS_MESSAGES_ERRORS_TOTAL == "moleculerpy.channels.messages.errors.total"
-    )
-    assert (
-        C.METRIC_CHANNELS_MESSAGES_RETRIES_TOTAL == "moleculerpy.channels.messages.retries.total"
-    )
+    assert C.METRIC_CHANNELS_MESSAGES_ERRORS_TOTAL == "moleculerpy.channels.messages.errors.total"
+    assert C.METRIC_CHANNELS_MESSAGES_RETRIES_TOTAL == "moleculerpy.channels.messages.retries.total"
     assert (
         C.METRIC_CHANNELS_MESSAGES_DEAD_LETTERING_TOTAL
         == "moleculerpy.channels.messages.deadLettering.total"

@@ -203,9 +203,7 @@ async def test_multiple_active_handlers_all_complete(redis_adapter, redis_client
         await redis_adapter.publish("test.multi", {"index": i}, {})
 
     # Wait for all 3 handlers to start
-    await asyncio.wait_for(
-        asyncio.gather(*[e.wait() for e in handlers_started]), timeout=3.0
-    )
+    await asyncio.wait_for(asyncio.gather(*[e.wait() for e in handlers_started]), timeout=3.0)
 
     # Verify 3 active messages
     active_count = await redis_adapter.get_number_of_channel_active_messages(channel.id)
@@ -268,12 +266,10 @@ async def test_backoff_state_cleaned_on_unsubscribe(redis_adapter):
 
     # Verify backoff state is cleaned up
     assert channel.id not in redis_adapter._backoff_state, "Main backoff should be cleaned"
-    assert (
-        f"{channel.id}-xclaim" not in redis_adapter._backoff_state
-    ), "xclaim backoff should be cleaned"
-    assert (
-        f"{channel.id}-dlq" not in redis_adapter._backoff_state
-    ), "dlq backoff should be cleaned"
+    assert f"{channel.id}-xclaim" not in redis_adapter._backoff_state, (
+        "xclaim backoff should be cleaned"
+    )
+    assert f"{channel.id}-dlq" not in redis_adapter._backoff_state, "dlq backoff should be cleaned"
 
 
 @pytest.mark.asyncio

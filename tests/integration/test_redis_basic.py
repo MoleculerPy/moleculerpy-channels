@@ -70,9 +70,7 @@ async def test_redis_publish_with_maxlen(redis_adapter, redis_client):
 
     # Publish 20 messages with maxlen=10
     for i in range(20):
-        await redis_adapter.publish(
-            channel_name, {"index": i}, {"xaddMaxLen": 10}
-        )
+        await redis_adapter.publish(channel_name, {"index": i}, {"xaddMaxLen": 10})
 
     # Verify stream is capped at ~10 messages
     messages = await redis_client.xrange(channel_name, "-", "+")
@@ -138,7 +136,9 @@ async def test_redis_consumer_group_created(redis_adapter, redis_client):
 
     # Verify group exists
     groups = await redis_client.xinfo_groups(channel.name)
-    group_names = [g["name"].decode() if isinstance(g["name"], bytes) else g["name"] for g in groups]
+    group_names = [
+        g["name"].decode() if isinstance(g["name"], bytes) else g["name"] for g in groups
+    ]
 
     assert "my-consumer-group" in group_names
 
@@ -190,9 +190,7 @@ async def test_redis_graceful_shutdown(redis_adapter):
     await asyncio.sleep(0.2)
 
     # Publish message
-    publish_task = asyncio.create_task(
-        redis_adapter.publish("test.shutdown", {"msg": "slow"}, {})
-    )
+    publish_task = asyncio.create_task(redis_adapter.publish("test.shutdown", {"msg": "slow"}, {}))
     await publish_task
 
     # Wait for processing to start

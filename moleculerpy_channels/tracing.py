@@ -207,9 +207,7 @@ class TracingMiddleware:
 
         return span_name
 
-    def _build_span_tags(
-        self, ctx: Any, channel: Channel, opts: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _build_span_tags(self, ctx: Any, channel: Channel, opts: dict[str, Any]) -> dict[str, Any]:
         """
         Build span tags from context and channel.
 
@@ -223,7 +221,11 @@ class TracingMiddleware:
         """
         # Base tags (always included)
         # MoleculerPy uses 'nodeID' (Moleculer.js compatible attribute name)
-        broker_node_id = getattr(self.broker, 'nodeID', getattr(self.broker, 'node_id', None)) if self.broker else None
+        broker_node_id = (
+            getattr(self.broker, "nodeID", getattr(self.broker, "node_id", None))
+            if self.broker
+            else None
+        )
 
         tags: dict[str, Any] = {
             "callingLevel": getattr(ctx, "level", 0),
@@ -262,14 +264,14 @@ class TracingMiddleware:
             if action_tags_opt.get("params") is True:
                 # Full params
                 if hasattr(ctx, "params") and ctx.params:
-                    tags["params"] = dict(ctx.params) if isinstance(ctx.params, dict) else ctx.params
+                    tags["params"] = (
+                        dict(ctx.params) if isinstance(ctx.params, dict) else ctx.params
+                    )
             elif isinstance(action_tags_opt.get("params"), list):
                 # Selective params (pick specific keys)
                 if hasattr(ctx, "params") and isinstance(ctx.params, dict):
                     tags["params"] = {
-                        k: ctx.params[k]
-                        for k in action_tags_opt["params"]
-                        if k in ctx.params
+                        k: ctx.params[k] for k in action_tags_opt["params"] if k in ctx.params
                     }
 
             # Extract meta
@@ -281,9 +283,7 @@ class TracingMiddleware:
                 # Selective meta (pick specific keys)
                 if hasattr(ctx, "meta") and isinstance(ctx.meta, dict):
                     tags["meta"] = {
-                        k: ctx.meta[k]
-                        for k in action_tags_opt["meta"]
-                        if k in ctx.meta
+                        k: ctx.meta[k] for k in action_tags_opt["meta"] if k in ctx.meta
                     }
 
         # Apply safety tags (remove sensitive data)
@@ -311,10 +311,21 @@ class TracingMiddleware:
             return obj
 
         sensitive_keys = {
-            "password", "pass", "pw", "pwd",
-            "token", "secret", "key", "apikey", "api_key",
-            "credit", "card", "cvv", "ssn",
-            "authorization", "auth"
+            "password",
+            "pass",
+            "pw",
+            "pwd",
+            "token",
+            "secret",
+            "key",
+            "apikey",
+            "api_key",
+            "credit",
+            "card",
+            "cvv",
+            "ssn",
+            "authorization",
+            "auth",
         }
 
         sanitized: dict[str, Any] = {}
