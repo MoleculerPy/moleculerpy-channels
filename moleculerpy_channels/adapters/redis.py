@@ -20,10 +20,10 @@ from ..metrics import ChannelMetrics
 
 try:
     import redis.asyncio as aioredis
-except ImportError:
+except ImportError as e:
     raise ImportError(
         "Redis support requires 'redis' package. Install with: pip install redis[hiredis]"
-    )
+    ) from e
 
 from ..channel import Channel
 from ..constants import HEADER_ORIGINAL_CHANNEL, HEADER_ORIGINAL_GROUP
