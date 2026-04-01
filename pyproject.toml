@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "moleculerpy-channels"
-version = "0.14.3"
+version = "0.2.0"
 description = "Python port of Moleculer Channels middleware for reliable pub/sub messaging"
 readme = "README.md"
 license = "MIT"
@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "moleculerpy>=0.14.1",
+    "moleculerpy>=0.14.6",
 ]
 
 [project.optional-dependencies]
