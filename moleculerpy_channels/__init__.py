@@ -14,7 +14,7 @@ from .tracing import TracingMiddleware
 try:
     __version__ = version("moleculerpy-channels")
 except PackageNotFoundError:
-    __version__ = "0.14.2"
+    __version__ = "0.2.0"
 
 __all__ = [
     "ChannelsMiddleware",
