@@ -644,6 +644,36 @@ async def test_parse_channel_dict_with_dead_lettering():
     assert channel.dead_lettering.queue_name == "FAILED_ORDERS"
 
 
+@pytest.mark.asyncio
+async def test_parse_channel_accepts_dead_lettering_instance():
+    """Regression for KNOWN-ISSUES #16.
+
+    Previously ``_parse_channel_definition`` only accepted a dict for
+    ``dead_lettering`` and silently dropped anything else, so callers who
+    built a typed ``DeadLetteringOptions`` object up front lost their DLQ
+    configuration without any warning. It now accepts both forms.
+    """
+    adapter = TestAdapter()
+    middleware = ChannelsMiddleware(adapter=adapter)
+    broker = create_mock_broker()
+    middleware.broker = broker
+
+    async def handler(p, r):
+        pass
+
+    dlq = DeadLetteringOptions(enabled=True, queue_name="PRE_BUILT_DLQ", error_info_ttl=3600)
+    definition = {"handler": handler, "dead_lettering": dlq}
+
+    service = create_mock_service()
+    channel = await middleware._parse_channel_definition("orders.cancelled", definition, service)
+
+    # The exact instance must flow through, not a recreated copy built from
+    # its dict representation — equality by identity is the strongest signal
+    # the regression is fixed.
+    assert channel.dead_lettering is dlq
+    assert channel.dead_lettering.queue_name == "PRE_BUILT_DLQ"
+
+
 # ── Channel Registry ──────────────────────────────────────────────────────
 
 
