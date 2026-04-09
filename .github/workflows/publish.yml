@@ -94,6 +94,12 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
+    # Must match the "Environment name" registered with the PyPI Trusted
+    # Publisher entry. The OIDC token claims include the environment, and
+    # PyPI rejects the exchange with `invalid-publisher` if the workflow's
+    # `environment:` (or absence of it) does not match what is registered
+    # on PyPI. Mirrors the working core moleculerpy publish.yaml.
+    environment: pypi
     permissions:
       contents: write
       id-token: write
