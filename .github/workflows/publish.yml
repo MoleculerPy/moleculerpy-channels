@@ -49,8 +49,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[all,dev]"
 
-      - name: Run tests
-        run: pytest tests/ -v --tb=short
+      - name: Run unit tests
+        # Only the unit suite runs in the publish gate. The integration
+        # suite (tests/integration/) hardcodes Redis on port 6380 to avoid
+        # colliding with system Redis on 6379, and the e2e suite needs the
+        # full local docker-compose.yml. Both are run in ci.yml against
+        # their own service definitions; gating publish on the unit suite
+        # alone keeps the release path fast and deterministic.
+        run: pytest tests/unit/ -v --tb=short
 
   build:
     needs: test
