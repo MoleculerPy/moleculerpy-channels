@@ -11,12 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      # nats:2-alpine starts with default config (no JetStream) — same as
+      # the working ci.yml. The previous attempt to enable JetStream via
+      # `--entrypoint "/nats-server -js"` broke because Docker parses
+      # that quoted string as a single literal binary path
+      # (`/nats-server -js`, including the space) and fails with
+      # `stat /nats-server -js: no such file or directory`. This blocked
+      # both the v0.2.0 and v0.2.1 publish runs until the fix.
       nats:
         image: nats:2-alpine
         ports:
           - 4222:4222
-        options: >-
-          --entrypoint "/nats-server -js"
       redis:
         image: redis:7-alpine
         ports:
