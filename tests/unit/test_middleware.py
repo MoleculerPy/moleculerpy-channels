@@ -16,7 +16,7 @@ import json
 import pytest
 
 from moleculerpy_channels.adapters.base import BaseAdapter
-from moleculerpy_channels.channel import Channel, DeadLetteringOptions
+from moleculerpy_channels.channel import Channel, DeadLetteringOptions, RedisOptions
 from moleculerpy_channels.errors import ChannelRegistrationError
 from moleculerpy_channels.middleware import ChannelsMiddleware
 
@@ -672,6 +672,39 @@ async def test_parse_channel_accepts_dead_lettering_instance():
     # the regression is fixed.
     assert channel.dead_lettering is dlq
     assert channel.dead_lettering.queue_name == "PRE_BUILT_DLQ"
+
+
+@pytest.mark.asyncio
+async def test_parse_channel_accepts_redis_options_instance():
+    """Mirror regression for KNOWN-ISSUES #16 — `RedisOptions` variant.
+
+    The original fix in `_parse_channel_definition` also extended `redis`
+    config handling to accept a typed `RedisOptions` instance. This test
+    is the unit-level mirror of `test_parse_channel_accepts_dead_lettering_instance`
+    so a future regression that silently drops `RedisOptions` instances
+    (but still accepts `DeadLetteringOptions`) is caught at the unit
+    layer, not only by the integration demo.
+    """
+    adapter = TestAdapter()
+    middleware = ChannelsMiddleware(adapter=adapter)
+    broker = create_mock_broker()
+    middleware.broker = broker
+
+    async def handler(p, r):
+        pass
+
+    redis_opts = RedisOptions(min_idle_time=444, claim_interval=222, dlq_check_interval=11)
+    definition = {"handler": handler, "redis": redis_opts}
+
+    service = create_mock_service()
+    channel = await middleware._parse_channel_definition("orders.pending", definition, service)
+
+    # Identity check: the middleware must pass the exact instance through,
+    # not reconstruct it from a dict round-trip.
+    assert channel.redis is redis_opts
+    assert channel.redis.min_idle_time == 444
+    assert channel.redis.claim_interval == 222
+    assert channel.redis.dlq_check_interval == 11
 
 
 # ── Channel Registry ──────────────────────────────────────────────────────
