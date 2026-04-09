@@ -275,19 +275,39 @@ class ChannelsMiddleware:
         service_name = getattr(service, "full_name", getattr(service, "name", "unknown"))
         consumer_id = self.adapter.add_prefix_topic(f"{node_id}.{service_name}.{channel_name}")
 
-        # Dead lettering options
+        # Dead lettering options — accept both dict and DeadLetteringOptions
+        # instance so callers can construct typed config objects directly
+        # instead of unpacking them back to dicts.
         dlq_opts = None
         if "dead_lettering" in channel_def:
             dlq_config = channel_def["dead_lettering"]
-            if isinstance(dlq_config, dict):
+            if isinstance(dlq_config, DeadLetteringOptions):
+                dlq_opts = dlq_config
+            elif isinstance(dlq_config, dict):
                 dlq_opts = DeadLetteringOptions(**dlq_config)
+            else:
+                if self.logger:
+                    self.logger.warning(
+                        "Ignoring invalid dead_lettering config type %s for channel '%s'",
+                        type(dlq_config).__name__,
+                        name,
+                    )
 
-        # Redis options
+        # Redis options — accept both dict and RedisOptions instance.
         redis_opts = None
         if "redis" in channel_def:
             redis_config = channel_def["redis"]
-            if isinstance(redis_config, dict):
+            if isinstance(redis_config, RedisOptions):
+                redis_opts = redis_config
+            elif isinstance(redis_config, dict):
                 redis_opts = RedisOptions(**redis_config)
+            else:
+                if self.logger:
+                    self.logger.warning(
+                        "Ignoring invalid redis config type %s for channel '%s'",
+                        type(redis_config).__name__,
+                        name,
+                    )
 
         # Tracing options
         tracing_opts = channel_def.get("tracing")
