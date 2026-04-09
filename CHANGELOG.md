@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.1] - 2026-04-09
+
+### Fixed
+- **`ChannelsMiddleware` accepts typed options instances (KNOWN-ISSUES #16)** —
+  `_parse_channel_definition` now accepts both `dict` and
+  `DeadLetteringOptions` / `RedisOptions` instances for the
+  `dead_lettering` and `redis` config keys. Previously callers who
+  built a typed options object up front lost their configuration
+  silently: the middleware only recognised `dict` and the instance
+  was dropped without warning, so the channel registered successfully
+  but with no DLQ / default Redis settings. The first symptom was
+  messages failing to route to the expected DLQ queue in production.
+  Anything that is neither a dict nor an instance now logs a
+  WARNING so the drop is observable.
+
+### Tests / evidence
+- **`demo_channels` new `test_dlq_typed_options`** — constructs
+  `DeadLetteringOptions(enabled=True, queue_name=...)` and
+  `RedisOptions(...)` as instances, passes them through service
+  schema verbatim, and after `broker.start()` looks up the parsed
+  `Channel` via `channel_registry` and asserts **identity** against
+  the typed objects (`channel.dead_lettering is typed_dlq`) — a
+  dict-roundtrip implementation would still fail this. Counterfactual:
+  reverting the middleware to the dict-only branch makes the demo
+  fail with `"DeadLetteringOptions instance dropped (dict-roundtrip)"`.
+- **Unit regression** —
+  `test_parse_channel_accepts_dead_lettering_instance` in
+  `tests/unit/test_middleware.py` covers the same instance path at
+  unit level.
+
+---
+
 ## [Unreleased]
 
 No unreleased changes at this time.
